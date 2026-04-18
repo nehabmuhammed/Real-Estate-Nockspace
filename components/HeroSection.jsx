@@ -35,9 +35,9 @@ export default function HeroSection() {
   }, []);
 
   useGSAP(() => {
-    // Elegant background parallax (moves down slightly on scroll)
+    // Powerful background parallax: moves down heavily
     gsap.to(bgRef.current, {
-      yPercent: 15,
+      yPercent: 40,
       ease: "none",
       scrollTrigger: {
         trigger: heroRef.current,
@@ -47,10 +47,10 @@ export default function HeroSection() {
       },
     });
 
-    // Content parallax (moves up slightly on scroll, pulling away from bg)
+    // Dramatic Content Parallax: Text & Elements zoom up quickly 
     gsap.to(contentRef.current, {
-      yPercent: -15,
-      opacity: 0,
+      yPercent: -45,
+      opacity: -0.5, // Fades out completely way before the bottom
       ease: "none",
       scrollTrigger: {
         trigger: heroRef.current,
@@ -69,8 +69,8 @@ export default function HeroSection() {
       ref={heroRef}
       className="relative w-full h-screen min-h-[700px] overflow-hidden bg-black"
     >
-      {/* BG Image with extra height for parallax movement */}
-      <div ref={bgRef} className="absolute inset-0 -top-[15%] h-[130%] w-full z-0">
+      {/* BG Image with massive extra height mapping for deep parallax */}
+      <div ref={bgRef} className="absolute inset-0 -top-[40%] h-[180%] w-full z-0">
         <Image
           src="/hero_bg.png"
           alt="Canyon Architecture"

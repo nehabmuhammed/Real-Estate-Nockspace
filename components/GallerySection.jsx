@@ -4,6 +4,13 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const images = [
   {
@@ -35,6 +42,24 @@ const images = [
 export default function GallerySection() {
   const [lightbox, setLightbox] = useState(null);
   const sliderRef = useRef(null);
+  const sectionRef = useRef(null);
+
+  useGSAP(() => {
+    // Parallax effect on all gallery images
+    gsap.fromTo(".gallery-parallax",
+      { yPercent: -15 },
+      {
+        yPercent: 15,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      }
+    );
+  }, { scope: sectionRef });
 
   const openLightbox = (idx) => setLightbox(idx);
   const closeLightbox = () => setLightbox(null);
@@ -49,7 +74,7 @@ export default function GallerySection() {
   };
 
   return (
-    <section id="gallery" className="bg-[#111] py-24 md:py-36 overflow-hidden">
+    <section ref={sectionRef} id="gallery" className="bg-[#111] py-24 md:py-36 overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-14 gap-6">
@@ -97,22 +122,29 @@ export default function GallerySection() {
               className="relative shrink-0 w-[340px] md:w-[420px] aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer group"
               onClick={() => openLightbox(i)}
             >
-              <Image src={img.src} alt={img.title} fill className="object-cover group-hover:scale-105 transition duration-700" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              {/* Extra height wrapper for parallax */}
+              <div className="absolute inset-0 -top-[15%] h-[130%] w-full z-0 gallery-parallax">
+                <Image src={img.src} alt={img.title} fill className="object-cover group-hover:scale-[1.03] transition duration-700" />
+              </div>
+
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent z-10" />
+              
               {/* Tag */}
-              <div className="absolute top-4 left-4">
+              <div className="absolute top-4 left-4 z-20">
                 <span className="font-inter text-xs font-semibold uppercase tracking-widest text-white bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
                   {img.tag}
                 </span>
               </div>
+              
               {/* Zoom icon */}
-              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition">
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition z-20">
                 <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
                   <ZoomIn size={16} />
                 </div>
               </div>
+              
               {/* Bottom label */}
-              <div className="absolute bottom-0 left-0 right-0 p-6">
+              <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
                 <p className="font-oswald font-bold text-white text-2xl uppercase tracking-tight mb-1">
                   {img.title}
                 </p>
